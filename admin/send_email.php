@@ -17,10 +17,10 @@ $client = mysqli_fetch_assoc($result);
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     
     // Данные из формы
-    $clientEmail = 'ponandralena@gmail.com';
+    $clientEmail = $client['email'] ?? '';
     $subject = $_POST['subject'] ?? 'Ответ от администратора';
     $message = $_POST['message'] ?? '';
-    $adminEmail = 'ponandralena@gmail.com'; // Ваш email
+    $adminEmail = 'example@gmail.com'; 
     $adminName = 'Поддержка сайта';
     
     // Валидация
@@ -33,7 +33,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (empty(trim($message))) {
         $errors[] = 'Сообщение не может быть пустым';
     }
-    
+
     if (empty($errors)) {
         
         // Заголовки
@@ -81,59 +81,58 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 ?>
-
-<title>Заявка #<?= $client['id'] ?> — УЗГТ</title>
-<?include('header.php')?>
-<main>
-    <h1>Отправить ответ клиенту</h1>
-    
-        <?php if (!empty($errors)): ?>
-        <?php foreach ($errors as $error): ?>
-            <p style="background:#f8d7da; color:#721c24; padding:13px 15px; 
-                      border-radius:5px; text-align:center; max-width:600px;">
-                <?= $error // *** ИЗМЕНЕНИЕ: короткий echo вместо короткого тега *** ?>
+<html>
+    <title>Заявка #<?= $client['id'] ?> — УЗГТ</title>
+    <?php include "header.php"; ?>
+    <main>
+        <h1>Отправить ответ клиенту</h1>
+        
+            <?php if (!empty($errors)): ?>
+            <?php foreach ($errors as $error): ?>
+                <p style="background:#f8d7da; color:#721c24; padding:13px 15px; 
+                        border-radius:5px; text-align:center; max-width:600px;">
+                </p>
+            <?php endforeach; ?>
+        <?php endif; ?>
+        
+        <?php if (isset($success)): ?>
+            <p style="background:#d4edda; color:#155724; padding:13px 15px; 
+                    border-radius:5px; text-align:center; max-width:600px;">
+                <?= $success ?>
             </p>
-        <?php endforeach; ?>
-    <?php endif; ?>
-    
-    <?php if (isset($success)): // *** ИЗМЕНЕНИЕ: вывод сообщения об успехе *** ?>
-        <p style="background:#d4edda; color:#155724; padding:13px 15px; 
-                  border-radius:5px; text-align:center; max-width:600px;">
-            <?= $success ?>
-        </p>
-    <?php endif; ?>
-    <div class="form-container">
-        <form method="POST" action="send_email.php?id=<?= $client['id'] ?>">
-            <div class="details">
-                <p>Email клиента</p>
-                <p><?= htmlspecialchars($client['email']) ?></p>
-                <p>|</p>
-                <p>Название заявки</p>
-                <p><?= htmlspecialchars($client['title']) ?></p>
-            </div>
-            
-            <div class="form-group">
-                <label for="subject">Тема письма:</label>
-                <input type="text" 
-                       id="subject" 
-                       name="subject" 
-                       placeholder="Ответ на ваш запрос">
-            </div>
-            
-            <div class="form-group">
-                <label for="message">Текст сообщения:</label>
-                <textarea id="content" 
-                          name="message" 
-                          required 
-                          placeholder="Введите текст ответа клиенту..."
-                          style='width:100%;'>
-                </textarea>
-            </div>
-            
-            <button type="submit" class='back-btn'>Отправить клиенту</button>
-            <button type="reset" class='delete-btn'>Очистить</button>
-        </form>
-    </div>
-</main>
-</body>
+        <?php endif; ?>
+        <div class="form-container">
+            <form method="POST" action="send_email.php?id=<?= $client['id'] ?>">
+                <div class="details">
+                    <p>Email клиента</p>
+                    <p><?= htmlspecialchars($client['email']) ?></p>
+                    <p>|</p>
+                    <p>Название заявки</p>
+                    <p><?= htmlspecialchars($client['title']) ?></p>
+                </div>
+                
+                <div class="form-group">
+                    <label for="subject">Тема письма:</label>
+                    <input type="text" 
+                        id="subject" 
+                        name="subject" 
+                        placeholder="Ответ на ваш запрос">
+                </div>
+                
+                <div class="form-group">
+                    <label for="message">Текст сообщения:</label>
+                    <textarea id="content" 
+                            name="message" 
+                            required 
+                            placeholder=""
+                            style='width:100%;'>
+                    </textarea>
+                </div>
+                
+                <button type="submit" class='back-btn'>Отправить клиенту</button>
+                <button type="reset" class='delete-btn'>Очистить</button>
+            </form>
+        </div>
+    </main>
+    </body>
 </html>
